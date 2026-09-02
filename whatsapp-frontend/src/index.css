@@ -1,0 +1,49 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  /* Vibrant WhatsApp Corporate Palette */
+  --corporate-green-primary: #008069;
+  --corporate-green-primary-hover: #006654;
+  --corporate-green-secondary: #059669;
+  --corporate-green-accent: #10B981;
+  --corporate-green-light: #D1FAE5;
+  --corporate-green-bg: #F8FAFC;
+  
+  --corporate-border: #E2E8F0;
+  --corporate-border-subtle: #CBD5E1;
+  
+  --corporate-text-dark: #0F172A;
+  --corporate-text-muted: #334155;
+  --corporate-text-subtle: #64748B;
+  
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body {
+  background-color: var(--corporate-green-bg);
+  color: var(--corporate-text-dark);
+  margin: 0;
+  padding: 0;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94A3B8;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
+}
