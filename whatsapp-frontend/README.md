@@ -1,3 +1,8 @@
+## Conexión al backend WhatsApp
+
+El inbox usa el backend cuando `.env` contiene `VITE_USE_MOCKS=false` y `VITE_API_BASE_URL` apunta a la URL pública del backend. Reinicia Vite después de cambiar `.env`.
+
+El modo real envía mensajes de texto al endpoint `/messages`; las conversaciones y mensajes entrantes se leen desde la caché temporal del backend. El modo mock queda disponible con `VITE_USE_MOCKS=true`.
 # WhatsApp CRM Multi-Tenant (Frontend)
 
 Frontend corporativo de alto rendimiento para la gestión multi-tenant de conversaciones entre clientes y bots/agentes mediante la WhatsApp Business Cloud API. Desarrollado con **React 19**, **TypeScript**, **Vite**, **Tailwind CSS v4** y **DaisyUI**.

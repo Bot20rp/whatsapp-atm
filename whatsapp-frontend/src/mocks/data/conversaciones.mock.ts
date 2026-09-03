@@ -15,6 +15,18 @@ export interface ConversacionMock {
 }
 
 export const CONVERSACIONES_MOCK: ConversacionMock[] = [
+  {
+    id: 'conv_nova_wa_76672191', empresaId: 'emp_novatech', numeroId: 'num_nova_ventas',
+    contactoId: 'cnt_nova_wa_76672191', contactoNombre: 'Contacto WhatsApp 76672191', contactoTelefono: '+591 76672191',
+    ultimoMensaje: '', ultimoMensajeTimestamp: new Date(0).toISOString(), noLeidos: 0, estado: 'human',
+    agenteAsignadoId: 'usr_carlos_morales', agenteAsignadoNombre: 'Carlos Morales', etiquetas: ['WhatsApp'],
+  },
+  {
+    id: 'conv_nova_wa_65936111', empresaId: 'emp_novatech', numeroId: 'num_nova_ventas',
+    contactoId: 'cnt_nova_wa_65936111', contactoNombre: 'Contacto WhatsApp 65936111', contactoTelefono: '+591 65936111',
+    ultimoMensaje: '', ultimoMensajeTimestamp: new Date(0).toISOString(), noLeidos: 0, estado: 'human',
+    agenteAsignadoId: 'usr_carlos_morales', agenteAsignadoNombre: 'Carlos Morales', etiquetas: ['WhatsApp'],
+  },
   // Novatech - Ventas Corporativas (num_nova_ventas)
   {
     id: 'conv_nova_v1',

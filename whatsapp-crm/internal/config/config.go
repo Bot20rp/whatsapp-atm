@@ -25,7 +25,7 @@ func Load() *Config {
 		WhatsAppAccessToken:   getEnv("WHATSAPP_ACCESS_TOKEN", ""),
 		WhatsAppPhoneNumberID: getEnv("WHATSAPP_PHONE_NUMBER_ID", ""),
 		WhatsAppVerifyToken:   getEnv("WHATSAPP_VERIFY_TOKEN", ""),
-		WhatsAppAPIVersion:    getEnv("WHATSAPP_API_VERSION", "v21.0"),
+		WhatsAppAPIVersion:    getEnv("WHATSAPP_API_VERSION", "v25.0"),
 	}
 }
 

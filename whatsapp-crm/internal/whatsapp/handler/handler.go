@@ -22,6 +22,45 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("/webhook", h.HandleWebhook)
 	mux.HandleFunc("/send", h.HandleSendMessage)
 	mux.HandleFunc("/send-template", h.HandleSendTemplate)
+	mux.HandleFunc("/conversations", h.HandleConversations)
+	mux.HandleFunc("/messages", h.HandleMessages)
+}
+
+func (h *Handler) HandleConversations(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	writeJSON(w, h.service.ListConversations())
+}
+
+func (h *Handler) HandleMessages(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		var payload SendMessagePayload
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil || payload.To == "" || payload.Message == "" {
+			http.Error(w, "to and message are required", http.StatusBadRequest)
+			return
+		}
+		if err := h.service.SendTextMessage(payload.To, payload.Message); err != nil {
+			http.Error(w, err.Error(), http.StatusBadGateway)
+			return
+		}
+		messages := h.service.GetMessages("conv_"+payload.To, payload.To)
+		writeJSON(w, messages[len(messages)-1])
+		return
+	}
+	if r.Method != http.MethodGet {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	id := r.URL.Query().Get("conversation_id")
+	to := r.URL.Query().Get("to")
+	writeJSON(w, h.service.GetMessages(id, to))
+}
+
+func writeJSON(w http.ResponseWriter, value interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(value)
 }
 
 func (h *Handler) HandleWebhook(w http.ResponseWriter, r *http.Request) {
@@ -141,7 +180,8 @@ func (h *Handler) HandleSendMessage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := h.service.SendTextMessage(payload.To, payload.Message); err != nil {
-		http.Error(w, "Failed to send message", http.StatusInternalServerError)
+		log.Printf("Error sending message to %s: %v", payload.To, err)
+		http.Error(w, err.Error(), http.StatusBadGateway)
 		return
 	}
 

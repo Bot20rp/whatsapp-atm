@@ -13,6 +13,16 @@ export interface ContactoMock {
 }
 
 export const CONTACTOS_MOCK: ContactoMock[] = [
+  {
+    id: 'cnt_nova_wa_76672191', empresaId: 'emp_novatech', nombre: 'Contacto WhatsApp 76672191',
+    telefono: '+591 76672191', email: '', organizacion: '', tags: ['WhatsApp'], notas: '',
+    estado: 'activo', origen: 'whatsapp', fechaCreacion: new Date().toISOString(),
+  },
+  {
+    id: 'cnt_nova_wa_65936111', empresaId: 'emp_novatech', nombre: 'Contacto WhatsApp 65936111',
+    telefono: '+591 65936111', email: '', organizacion: '', tags: ['WhatsApp'], notas: '',
+    estado: 'activo', origen: 'whatsapp', fechaCreacion: new Date().toISOString(),
+  },
   // Contactos Novatech
   {
     id: 'cnt_nova_1',

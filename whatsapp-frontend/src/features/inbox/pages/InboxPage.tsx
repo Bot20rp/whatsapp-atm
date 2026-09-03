@@ -59,6 +59,25 @@ export const InboxPage: React.FC = () => {
     cargarConversaciones();
   }, [cargarConversaciones]);
 
+  useEffect(() => {
+    if (import.meta.env.VITE_USE_MOCKS !== 'false' || !empresaActual || !numeroActual) return;
+
+    const intervalId = window.setInterval(async () => {
+      try {
+        const convs = await inboxApi.getConversaciones(empresaActual.id, numeroActual.id);
+        setConversaciones(convs);
+        if (selectedConv) {
+          const msgs = await inboxApi.getMensajes(empresaActual.id, numeroActual.id, selectedConv.id);
+          setMensajes(msgs);
+        }
+      } catch {
+        // Mantener los datos visibles mientras el backend se reinicia.
+      }
+    }, 5000);
+
+    return () => window.clearInterval(intervalId);
+  }, [empresaActual?.id, numeroActual?.id, selectedConv?.id]);
+
   // Cargar mensajes cuando cambia la conversación seleccionada
   useEffect(() => {
     const cargarMensajes = async () => {
@@ -130,7 +149,8 @@ export const InboxPage: React.FC = () => {
       selectedConv.id,
       contenido,
       remitente,
-      'Carlos Morales'
+      'Carlos Morales',
+      selectedConv.contactoTelefono
     );
 
     setMensajes((prev) => [...prev, nuevo]);

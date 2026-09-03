@@ -5,6 +5,18 @@ import path from "node:path";
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
+  server: {
+    proxy: {
+      '/crm-api': {
+        target: 'https://uncle-prideful-uncloak.ngrok-free.dev',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/crm-api/, ''),
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
+      },
+    },
+  },
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
