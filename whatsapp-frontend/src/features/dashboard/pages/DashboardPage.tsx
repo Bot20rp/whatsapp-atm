@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   AlertCircle,
   Clock3,
+  ArrowUpRight,
 } from 'lucide-react';
 import { useTenant } from '../../../shared/hooks/useTenant';
 import { dashboardApi } from '../api/dashboard.api';
@@ -19,6 +20,9 @@ import { LineChart } from '../../../shared/components/charts/LineChart';
 import { DonutChart } from '../../../shared/components/charts/DonutChart';
 import { formatNumber } from '../../../shared/utils/formatters';
 import { Link } from 'react-router-dom';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/components/ui/card';
+import { Badge } from '../../../shared/components/ui/badge';
+import { Button } from '../../../shared/components/ui/button';
 
 export const DashboardPage: React.FC = () => {
   const { empresaActual, numeroActual } = useTenant();
@@ -51,221 +55,224 @@ export const DashboardPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header Context Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#008069]">
-              Organización Activa
-            </span>
-            <span className="text-slate-300">•</span>
-            <span className="text-[11px] font-mono text-slate-500 font-semibold">{empresaActual?.identificadorFiscal}</span>
+      <Card className="border-slate-800 bg-slate-900/90 shadow-xl">
+        <CardContent className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <Badge variant="default" className="uppercase font-bold tracking-wider text-[10px]">
+                Organización Activa
+              </Badge>
+              <span className="text-slate-600">•</span>
+              <span className="text-[11px] font-mono text-slate-400 font-semibold">{empresaActual?.identificadorFiscal}</span>
+            </div>
+            <h2 className="text-2xl font-bold text-white mt-1.5">{empresaActual?.nombre}</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Línea activa de mensajería: <strong className="text-emerald-400">{numeroActual?.alias}</strong> ({numeroActual?.numero})
+            </p>
           </div>
-          <h2 className="text-xl font-black text-slate-900 mt-0.5">{empresaActual?.nombre}</h2>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Línea activa de mensajería: <strong className="text-[#008069]">{numeroActual?.alias}</strong> ({numeroActual?.numero})
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/inbox"
-            className="btn btn-sm bg-[#008069] hover:bg-[#006654] text-white text-xs border-none font-bold px-4 shadow-sm"
-          >
-            Ir a Bandeja de Entrada
-          </Link>
-          <Link
-            to="/whatsapp"
-            className="btn btn-sm bg-white hover:bg-slate-50 text-slate-800 text-xs border border-slate-300 font-semibold px-4 shadow-xs"
-          >
-            Gestionar Líneas
-          </Link>
-        </div>
-      </div>
+          <div className="flex items-center gap-3">
+            <Link to="/inbox">
+              <Button size="sm" className="gap-2 font-bold shadow-lg shadow-emerald-500/20">
+                Ir a Bandeja
+                <ArrowUpRight className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Link to="/whatsapp">
+              <Button variant="outline" size="sm">
+                Gestionar Líneas
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* KPI Cards with High Contrast and Vibrant Colors */}
+      {/* KPI Cards with shadcn Card */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Mensajes Hoy (Emerald) */}
-        <div className="bg-white border border-slate-200 border-l-4 border-l-emerald-600 rounded-lg p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Mensajes Hoy</span>
-            <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-xs">
-              <MessageSquare className="w-5 h-5" />
+        {/* Card 1: Mensajes Hoy */}
+        <Card className="border-emerald-500/30 bg-slate-900/80">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Mensajes Hoy</span>
+              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+                <MessageSquare className="w-5 h-5" />
+              </div>
             </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900">
-              {formatNumber(analytics.totalMensajesHoy)}
-            </span>
-            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">+12% hoy</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-medium">Línea: {numeroActual?.alias}</div>
-        </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-white">
+                {formatNumber(analytics.totalMensajesHoy)}
+              </span>
+              <Badge variant="success" className="text-[10px]">+12% hoy</Badge>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 font-medium">Línea: {numeroActual?.alias}</div>
+          </CardContent>
+        </Card>
 
-        {/* Card 2: Conversaciones Abiertas (Blue) */}
-        <div className="bg-white border border-slate-200 border-l-4 border-l-blue-600 rounded-lg p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Chats Activos</span>
-            <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-xs">
-              <Users className="w-5 h-5" />
+        {/* Card 2: Conversaciones Abiertas */}
+        <Card className="border-blue-500/30 bg-slate-900/80">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Chats Activos</span>
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center border border-blue-500/20">
+                <Users className="w-5 h-5" />
+              </div>
             </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900">
-              {formatNumber(analytics.conversacionesAbiertas)}
-            </span>
-            <span className="text-[11px] text-blue-800 bg-blue-100 px-1.5 py-0.5 rounded font-bold">En curso</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-medium">Atendidas por agentes y bot</div>
-        </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-white">
+                {formatNumber(analytics.conversacionesAbiertas)}
+              </span>
+              <Badge variant="secondary" className="text-[10px]">En curso</Badge>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 font-medium">Atendidas por agentes y bot</div>
+          </CardContent>
+        </Card>
 
-        {/* Card 3: Tiempo Respuesta (Amber) */}
-        <div className="bg-white border border-slate-200 border-l-4 border-l-amber-500 rounded-lg p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Tiempo SLA</span>
-            <div className="w-9 h-9 rounded-lg bg-amber-500 flex items-center justify-center text-white shadow-xs">
-              <Clock className="w-5 h-5" />
+        {/* Card 3: Tiempo Respuesta */}
+        <Card className="border-amber-500/30 bg-slate-900/80">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Tiempo SLA</span>
+              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center border border-amber-500/20">
+                <Clock className="w-5 h-5" />
+              </div>
             </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900">
-              {analytics.tiempoRespuestaPromedioSegundos}s
-            </span>
-            <span className="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">Óptimo</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-medium">Meta corporativa: &lt; 90s</div>
-        </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-white">
+                {analytics.tiempoRespuestaPromedioSegundos}s
+              </span>
+              <Badge variant="success" className="text-[10px]">Óptimo</Badge>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 font-medium">Meta corporativa: &lt; 90s</div>
+          </CardContent>
+        </Card>
 
-        {/* Card 4: Resolución por Bot (Purple) */}
-        <div className="bg-white border border-slate-200 border-l-4 border-l-purple-600 rounded-lg p-4 shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">Resolución Bot</span>
-            <div className="w-9 h-9 rounded-lg bg-purple-600 flex items-center justify-center text-white shadow-xs">
-              <Bot className="w-5 h-5" />
+        {/* Card 4: Resolución por Bot */}
+        <Card className="border-purple-500/30 bg-slate-900/80">
+          <CardContent className="p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Resolución Bot</span>
+              <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center border border-purple-500/20">
+                <Bot className="w-5 h-5" />
+              </div>
             </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-slate-900">
-              {analytics.tasaResolucionBot}%
-            </span>
-            <span className="text-[11px] text-purple-800 bg-purple-100 px-1.5 py-0.5 rounded font-bold">Automático</span>
-          </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-medium">Escalado a humanos: {analytics.tasaResolucionHumano}%</div>
-        </div>
+            <div className="mt-3 flex items-baseline gap-2">
+              <span className="text-3xl font-black text-white">
+                {analytics.tasaResolucionBot}%
+              </span>
+              <Badge variant="outline" className="text-[10px]">Automático</Badge>
+            </div>
+            <div className="text-[11px] text-slate-400 mt-1 font-medium">Escalado a humanos: {analytics.tasaResolucionHumano}%</div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Main Charts & WhatsApp Lines Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left 2 Cols: Activity Charts */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Volumen de Mensajes Últimos 7 Días */}
-          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
               <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Volumen Diario de Mensajes
-                </h3>
-                <p className="text-[11px] text-slate-500">Tráfico procesado en los últimos 7 días</p>
+                <CardTitle className="text-sm uppercase tracking-wider text-slate-300">Volumen Diario de Mensajes</CardTitle>
+                <CardDescription className="text-xs">Tráfico procesado en los últimos 7 días</CardDescription>
               </div>
-              <span className="badge badge-sm bg-emerald-50 border border-emerald-300 text-emerald-800 font-bold text-[10px]">
+              <Badge variant="default" className="text-[10px]">
                 {numeroActual?.alias}
-              </span>
-            </div>
-            <BarChart data={analytics.mensajesPorDia} height={200} barColor="#008069" />
-          </div>
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <BarChart data={analytics.mensajesPorDia} height={200} barColor="#10b981" />
+            </CardContent>
+          </Card>
 
-          {/* Distribución Horaria de Tráfico */}
-          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-              <div>
-                <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                  Curva de Actividad por Horario
-                </h3>
-                <p className="text-[11px] text-slate-500">Picos de mensajes entrantes y salientes</p>
-              </div>
-            </div>
-            <LineChart
-              data={analytics.volumenPorHora}
-              height={180}
-              lineColor="#2563EB"
-              fillColor="#DBEAFE"
-            />
-          </div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm uppercase tracking-wider text-slate-300">Curva de Actividad por Horario</CardTitle>
+              <CardDescription className="text-xs">Picos de mensajes entrantes y salientes</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LineChart
+                data={analytics.volumenPorHora}
+                height={180}
+                lineColor="#3b82f6"
+                fillColor="#1e3a8a"
+              />
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right 1 Col: Lines Status & Bot Distribution */}
         <div className="space-y-6">
-          {/* Estado de Líneas WhatsApp del Tenant */}
-          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-              <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                Líneas WhatsApp ({numeros.length})
-              </h3>
-              <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-3">
+              <CardTitle className="text-sm uppercase tracking-wider text-slate-300">Líneas WhatsApp ({numeros.length})</CardTitle>
+              <Badge variant="outline" className="text-[10px]">
                 {empresaActual?.logoIniciales}
-              </span>
-            </div>
+              </Badge>
+            </CardHeader>
 
-            <div className="space-y-3">
+            <CardContent className="space-y-3">
               {numeros.map((num) => (
                 <div
                   key={num.id}
-                  className={`p-3 rounded-lg border text-xs transition-all ${
+                  className={`p-3 rounded-xl border text-xs transition-all ${
                     num.id === numeroActual?.id
-                      ? 'bg-emerald-50/60 border-[#008069] ring-1 ring-[#008069]'
-                      : 'bg-white border-slate-200 hover:border-slate-300'
+                      ? 'bg-emerald-950/40 border-emerald-500/50 ring-1 ring-emerald-500/30'
+                      : 'bg-slate-950/50 border-slate-800 hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Smartphone className={`w-4 h-4 ${num.id === numeroActual?.id ? 'text-[#008069]' : 'text-slate-500'} shrink-0`} />
-                      <span className="font-bold text-slate-900">{num.alias}</span>
+                      <Smartphone className={`w-4 h-4 ${num.id === numeroActual?.id ? 'text-emerald-400' : 'text-slate-500'} shrink-0`} />
+                      <span className="font-bold text-white">{num.alias}</span>
                     </div>
                     {num.estado === 'conectado' && (
-                      <span className="flex items-center gap-1 text-[10px] text-white bg-emerald-600 px-2 py-0.5 rounded font-bold shadow-xs">
+                      <Badge variant="success" className="gap-1 text-[10px]">
                         <CheckCircle2 className="w-3 h-3" /> Conectado
-                      </span>
+                      </Badge>
                     )}
                     {num.estado === 'pendiente_verificacion' && (
-                      <span className="flex items-center gap-1 text-[10px] text-amber-900 bg-amber-200 px-2 py-0.5 rounded font-bold">
+                      <Badge variant="warning" className="gap-1 text-[10px]">
                         <Clock3 className="w-3 h-3" /> Verificación
-                      </span>
+                      </Badge>
                     )}
                     {num.estado === 'desconectado' && (
-                      <span className="flex items-center gap-1 text-[10px] text-rose-800 bg-rose-100 px-2 py-0.5 rounded font-bold">
+                      <Badge variant="destructive" className="gap-1 text-[10px]">
                         <AlertCircle className="w-3 h-3" /> Desconectado
-                      </span>
+                      </Badge>
                     )}
                   </div>
 
-                  <div className="mt-2 text-[11px] font-mono text-slate-600 flex justify-between">
+                  <div className="mt-2 text-[11px] font-mono text-slate-400 flex justify-between">
                     <span>{num.numero}</span>
-                    <span className="font-semibold text-slate-800">Calidad: {num.calidad.toUpperCase()}</span>
+                    <span className="font-semibold text-slate-300">Calidad: {num.calidad.toUpperCase()}</span>
                   </div>
 
-                  <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between text-[10px] text-slate-500 font-medium">
-                    <span>Hoy: <strong className="text-slate-800">{num.mensajesHoy}</strong> msgs</span>
+                  <div className="mt-2 pt-2 border-t border-slate-800 flex justify-between text-[10px] text-slate-400 font-medium">
+                    <span>Hoy: <strong className="text-white">{num.mensajesHoy}</strong> msgs</span>
                     <span>Límite: {num.limiteDiario.toLocaleString()}</span>
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Distribución Bot vs Agente Humano */}
-          <div className="bg-white border border-slate-200 rounded-lg p-5 shadow-xs">
-            <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-100 pb-3">
-              Resolución Bot vs Humano
-            </h3>
-            <DonutChart
-              segments={[
-                { label: 'Bot Inteligente', porcentaje: analytics.tasaResolucionBot, color: '#7C3AED' },
-                { label: 'Agentes Humanos', porcentaje: analytics.tasaResolucionHumano, color: '#008069' },
-              ]}
-              size={140}
-              centerText={`${analytics.tasaResolucionBot}%`}
-              centerSubtext="Automático"
-            />
-          </div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm uppercase tracking-wider text-slate-300">Resolución Bot vs Humano</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DonutChart
+                segments={[
+                  { label: 'Bot Inteligente', porcentaje: analytics.tasaResolucionBot, color: '#a855f7' },
+                  { label: 'Agentes Humanos', porcentaje: analytics.tasaResolucionHumano, color: '#10b981' },
+                ]}
+                size={140}
+                centerText={`${analytics.tasaResolucionBot}%`}
+                centerSubtext="Automático"
+              />
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

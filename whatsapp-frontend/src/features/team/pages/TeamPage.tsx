@@ -4,6 +4,18 @@ import { useTenant } from '../../../shared/hooks/useTenant';
 import { teamApi } from '../api/team.api';
 import { MiembroEquipoMock } from '../types/team.types';
 import { Spinner } from '../../../shared/components/feedback/Spinner';
+import { Button } from '../../../shared/components/ui/button';
+import { Badge } from '../../../shared/components/ui/badge';
+import { Avatar } from '../../../shared/components/ui/avatar';
+import { Card, CardContent, CardTitle, CardDescription } from '../../../shared/components/ui/card';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from '../../../shared/components/ui/table';
 
 export const TeamPage: React.FC = () => {
   const { empresaActual, numerosDisponibles } = useTenant();
@@ -34,88 +46,84 @@ export const TeamPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Top Banner */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-        <div>
-          <h2 className="text-xl font-black text-slate-900">Equipo y Permisos por Línea</h2>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Control de acceso a números WhatsApp de <strong className="text-[#008069]">{empresaActual?.nombre}</strong>
-          </p>
-        </div>
+      <Card>
+        <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-xl font-bold text-white">Equipo y Permisos por Línea</CardTitle>
+            <CardDescription className="text-xs">
+              Control de acceso a números WhatsApp de <strong className="text-emerald-400">{empresaActual?.nombre}</strong>
+            </CardDescription>
+          </div>
 
-        <button
-          type="button"
-          className="btn btn-sm bg-[#008069] hover:bg-[#006654] text-white text-xs border-none font-bold px-4 flex items-center gap-1.5 shadow-sm"
-        >
-          <UserPlus className="w-3.5 h-3.5" />
-          <span>Invitar Usuario</span>
-        </button>
-      </div>
+          <Button className="gap-2 font-bold shadow-lg shadow-emerald-500/20">
+            <UserPlus className="w-4 h-4" />
+            <span>Invitar Usuario</span>
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Team Table */}
-      <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-xs">
-        {loading ? (
-          <Spinner text="Cargando miembros del equipo..." />
-        ) : (
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="bg-slate-100 border-b border-slate-200 text-slate-700 font-bold uppercase text-[10px] tracking-wider">
-                <th className="p-3.5">Usuario</th>
-                <th className="p-3.5">Rol Corporativo</th>
-                <th className="p-3.5">Líneas Asignadas</th>
-                <th className="p-3.5">Atendidos Hoy</th>
-                <th className="p-3.5">Estado</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {equipo.map((m) => (
-                <tr key={m.id} className="hover:bg-emerald-50/40 transition-colors">
-                  <td className="p-3.5">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-full bg-[#008069] text-white flex items-center justify-center font-black shadow-xs">
-                        {m.nombre.substring(0, 2).toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-bold text-slate-900">{m.nombre}</div>
-                        <div className="text-[11px] text-slate-500 font-medium">{m.email}</div>
-                      </div>
+      {loading ? (
+        <Spinner text="Cargando miembros del equipo..." />
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Usuario</TableHead>
+              <TableHead>Rol Corporativo</TableHead>
+              <TableHead>Líneas Asignadas</TableHead>
+              <TableHead>Atendidos Hoy</TableHead>
+              <TableHead>Estado</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {equipo.map((m) => (
+              <TableRow key={m.id}>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Avatar
+                      fallback={m.nombre.substring(0, 2).toUpperCase()}
+                      size="md"
+                      className="bg-emerald-600/30 text-emerald-400 border-emerald-500/40 font-bold"
+                    />
+                    <div>
+                      <div className="font-bold text-white text-xs">{m.nombre}</div>
+                      <div className="text-[11px] text-slate-400">{m.email}</div>
                     </div>
-                  </td>
+                  </div>
+                </TableCell>
 
-                  <td className="p-3.5">
-                    <span className="text-[10px] font-extrabold uppercase px-2.5 py-1 rounded bg-indigo-100 text-indigo-900 border border-indigo-200">
-                      {m.rol}
-                    </span>
-                  </td>
+                <TableCell>
+                  <Badge variant="outline" className="border-purple-500/30 text-purple-300 bg-purple-500/10 uppercase text-[10px]">
+                    {m.rol}
+                  </Badge>
+                </TableCell>
 
-                  <td className="p-3.5">
-                    <div className="flex flex-wrap gap-1">
-                      {m.numerosPermitidos.map((numId, idx) => (
-                        <span
-                          key={idx}
-                          className="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded font-bold flex items-center gap-1"
-                        >
-                          <Smartphone className="w-3 h-3 text-[#008069]" />
-                          {getNombreNumero(numId)}
-                        </span>
-                      ))}
-                    </div>
-                  </td>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {m.numerosPermitidos.map((numId, idx) => (
+                      <Badge key={idx} variant="success" className="gap-1 text-[10px]">
+                        <Smartphone className="w-3 h-3 text-emerald-400" />
+                        {getNombreNumero(numId)}
+                      </Badge>
+                    ))}
+                  </div>
+                </TableCell>
 
-                  <td className="p-3.5 font-bold text-slate-900">
-                    {m.conversacionesAtendidasHoy} chats
-                  </td>
+                <TableCell className="font-bold text-white text-xs">
+                  {m.conversacionesAtendidasHoy} chats
+                </TableCell>
 
-                  <td className="p-3.5">
-                    <span className="flex items-center gap-1 text-[10px] text-white bg-emerald-600 px-2.5 py-0.5 rounded font-black shadow-xs w-fit">
-                      <CheckCircle2 className="w-3 h-3" /> Activo
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+                <TableCell>
+                  <Badge variant="success" className="gap-1 text-[10px]">
+                    <CheckCircle2 className="w-3 h-3" /> Activo
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </div>
   );
 };

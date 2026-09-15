@@ -12,6 +12,7 @@ export interface ConversacionMock {
   agenteAsignadoId: string | null;
   agenteAsignadoNombre: string | null;
   etiquetas: string[];
+  favorito?: boolean;
 }
 
 export const CONVERSACIONES_MOCK: ConversacionMock[] = [
@@ -42,6 +43,7 @@ export const CONVERSACIONES_MOCK: ConversacionMock[] = [
     agenteAsignadoId: 'user_nova_1',
     agenteAsignadoNombre: 'Carlos Morales',
     etiquetas: ['Demo Agendada', 'Enterprise'],
+    favorito: true,
   },
   {
     id: 'conv_nova_v2',

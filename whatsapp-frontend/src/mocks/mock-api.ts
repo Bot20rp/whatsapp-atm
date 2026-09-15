@@ -79,6 +79,23 @@ export const mockApi = {
     return simulateLatency(conversaciones[idx]);
   },
 
+  async toggleFavorito(
+    empresaId: string,
+    conversacionId: string
+  ): Promise<ConversacionMock> {
+    const idx = conversaciones.findIndex(
+      (c) => c.id === conversacionId && c.empresaId === empresaId
+    );
+    if (idx === -1) throw new Error('Conversación no encontrada');
+
+    conversaciones[idx] = {
+      ...conversaciones[idx],
+      favorito: !conversaciones[idx].favorito,
+    };
+
+    return simulateLatency(conversaciones[idx]);
+  },
+
   // Mensajes
   async getMensajes(empresaId: string, numeroId: string, conversacionId: string): Promise<MensajeMock[]> {
     const filtered = mensajes.filter(

@@ -10,6 +10,7 @@ import GuestRoute from './guards/GuestRoute';
 
 // Feature Pages
 import LoginPage from '../../features/auth/pages/LoginPage';
+import HomePage from '../../features/home/pages/HomePage';
 import DashboardPage from '../../features/dashboard/pages/DashboardPage';
 import InboxPage from '../../features/inbox/pages/InboxPage';
 import ContactsPage from '../../features/contacts/pages/ContactsPage';
@@ -21,10 +22,20 @@ import TeamPage from '../../features/team/pages/TeamPage';
 import BillingPage from '../../features/billing/pages/BillingPage';
 
 export const router = createBrowserRouter([
+  // Public Route (Landing Home Page accesible para todos)
+  {
+    path: '/home',
+    element: <HomePage />,
+  },
+
   // Guest Routes (Autenticación)
   {
     element: <GuestRoute />,
     children: [
+      {
+        path: '/',
+        element: <HomePage />,
+      },
       {
         path: '/auth',
         element: <AuthLayout />,

@@ -6,9 +6,14 @@ import {
   CheckCircle2,
   RotateCcw,
   Info,
+  Star,
 } from 'lucide-react';
 import { ConversacionMock, MensajeMock } from '../types/inbox.types';
 import { MessageBubble } from './MessageBubble';
+import { Button } from '../../../shared/components/ui/button';
+import { Input } from '../../../shared/components/ui/input';
+import { Badge } from '../../../shared/components/ui/badge';
+import { Avatar } from '../../../shared/components/ui/avatar';
 
 interface ChatWindowProps {
   conversacion: ConversacionMock;
@@ -17,6 +22,7 @@ interface ChatWindowProps {
   onCambiarEstado: (estado: 'bot' | 'human' | 'closed') => Promise<void>;
   onToggleSidebar: () => void;
   sidebarAbierto: boolean;
+  onToggleFavorito?: () => void;
 }
 
 export const ChatWindow: React.FC<ChatWindowProps> = ({
@@ -26,6 +32,7 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   onCambiarEstado,
   onToggleSidebar,
   sidebarAbierto,
+  onToggleFavorito,
 }) => {
   const [nuevoMensaje, setNuevoMensaje] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -54,36 +61,38 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#F8FAFC] min-w-0">
+    <div className="flex-1 flex flex-col h-full bg-slate-950 min-w-0">
       {/* Chat Header */}
-      <div className="h-16 px-5 bg-white border-b border-slate-200 flex items-center justify-between shrink-0 shadow-xs">
+      <div className="h-16 px-5 bg-slate-900 border-b border-slate-800 flex items-center justify-between shrink-0 shadow-lg">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-10 h-10 rounded-full bg-[#008069] text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-            {conversacion.contactoNombre.substring(0, 2).toUpperCase()}
-          </div>
+          <Avatar
+            fallback={conversacion.contactoNombre.substring(0, 2).toUpperCase()}
+            size="md"
+            className="bg-emerald-600/30 text-emerald-400 border-emerald-500/40"
+          />
           <div className="truncate">
             <div className="flex items-center gap-2">
-              <h3 className="font-bold text-sm text-slate-900 truncate">
+              <h3 className="font-bold text-sm text-white truncate">
                 {conversacion.contactoNombre}
               </h3>
               {/* Status Badge */}
               {conversacion.estado === 'bot' && (
-                <span className="flex items-center gap-1 text-[10px] bg-indigo-100 text-indigo-800 border border-indigo-200 px-2 py-0.5 rounded font-extrabold uppercase">
+                <Badge variant="outline" className="gap-1 text-[10px] border-purple-500/30 text-purple-400 bg-purple-500/10">
                   <Bot className="w-3 h-3" /> Bot Activo
-                </span>
+                </Badge>
               )}
               {conversacion.estado === 'human' && (
-                <span className="flex items-center gap-1 text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded font-extrabold uppercase">
+                <Badge variant="success" className="gap-1 text-[10px]">
                   <UserCheck className="w-3 h-3" /> Agente: {conversacion.agenteAsignadoNombre || 'Asignado'}
-                </span>
+                </Badge>
               )}
               {conversacion.estado === 'closed' && (
-                <span className="flex items-center gap-1 text-[10px] bg-slate-200 text-slate-700 border border-slate-300 px-2 py-0.5 rounded font-bold uppercase">
+                <Badge variant="secondary" className="gap-1 text-[10px]">
                   <CheckCircle2 className="w-3 h-3" /> Caso Cerrado
-                </span>
+                </Badge>
               )}
             </div>
-            <span className="text-[11px] font-mono text-slate-500 font-semibold">
+            <span className="text-[11px] font-mono text-slate-400 font-semibold">
               {conversacion.contactoTelefono}
             </span>
           </div>
@@ -92,61 +101,76 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           {conversacion.estado === 'bot' && (
-            <button
+            <Button
+              size="sm"
               onClick={() => onCambiarEstado('human')}
-              className="btn btn-xs bg-[#008069] hover:bg-[#006654] text-white border-none font-bold px-3 flex items-center gap-1 shadow-xs"
+              className="gap-1 font-bold text-xs shadow-md shadow-emerald-500/20"
               title="Derivar conversación a un asesor humano"
             >
               <UserCheck className="w-3.5 h-3.5" /> Escalar a Humano
-            </button>
+            </Button>
           )}
 
           {conversacion.estado === 'human' && (
             <>
-              <button
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => onCambiarEstado('bot')}
-                className="btn btn-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-3 flex items-center gap-1 shadow-xs"
+                className="gap-1 text-xs border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
                 title="Devolver control al bot de respuestas automáticas"
               >
-                <Bot className="w-3.5 h-3.5 text-indigo-600" /> Devolver al Bot
-              </button>
-              <button
+                <Bot className="w-3.5 h-3.5" /> Devolver al Bot
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => onCambiarEstado('closed')}
-                className="btn btn-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-semibold px-3 flex items-center gap-1 shadow-xs"
+                className="gap-1 text-xs"
                 title="Marcar como resuelta"
               >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Cerrar Caso
-              </button>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Cerrar Caso
+              </Button>
             </>
           )}
 
           {conversacion.estado === 'closed' && (
-            <button
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => onCambiarEstado('human')}
-              className="btn btn-xs bg-white hover:bg-slate-50 text-slate-800 border border-slate-300 font-bold px-3 flex items-center gap-1 shadow-xs"
+              className="gap-1 text-xs"
             >
               <RotateCcw className="w-3.5 h-3.5" /> Reabrir Caso
-            </button>
+            </Button>
           )}
 
-          <button
+          <Button
+            variant={conversacion.favorito ? 'default' : 'outline'}
+            size="icon"
+            onClick={onToggleFavorito}
+            title={conversacion.favorito ? 'Quitar de favoritos' : 'Anclar como favorito'}
+            className={`h-9 w-9 ${conversacion.favorito ? 'bg-amber-600 hover:bg-amber-500 text-white' : ''}`}
+          >
+            <Star className={`w-4 h-4 ${conversacion.favorito ? 'fill-current' : ''}`} />
+          </Button>
+
+          <Button
+            variant={sidebarAbierto ? 'default' : 'outline'}
+            size="icon"
             onClick={onToggleSidebar}
-            className={`p-1.5 rounded-md border transition-colors ${
-              sidebarAbierto
-                ? 'bg-emerald-100 border-emerald-300 text-[#008069]'
-                : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-50'
-            }`}
             title="Ver información del cliente"
+            className="h-9 w-9"
           >
             <Info className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Messages Scroll Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1">
         {conversacion.estado === 'closed' && (
-          <div className="my-3 p-2.5 text-center text-xs text-slate-700 bg-amber-50 border border-amber-200 rounded-md font-medium">
+          <div className="my-3 p-2.5 text-center text-xs text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-xl font-medium">
             Esta conversación fue marcada como <strong>Cerrada</strong>. Cualquier nuevo mensaje la reabrirá automáticamente.
           </div>
         )}
@@ -160,9 +184,9 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
       {/* Message Input Box */}
       <form
         onSubmit={handleSubmit}
-        className="p-3.5 bg-white border-t border-slate-200 flex items-center gap-2 shadow-sm"
+        className="p-3.5 bg-slate-900 border-t border-slate-800 flex items-center gap-2 shadow-2xl"
       >
-        <input
+        <Input
           type="text"
           value={nuevoMensaje}
           onChange={(e) => setNuevoMensaje(e.target.value)}
@@ -171,18 +195,21 @@ export const ChatWindow: React.FC<ChatWindowProps> = ({
               ? 'Escribe para reabrir y responder al cliente...'
               : 'Escribe una respuesta corporativa por WhatsApp...'
           }
-          className="flex-1 px-3.5 py-2 text-xs bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:border-[#008069] focus:ring-1 focus:ring-[#008069] text-slate-900"
+          className="flex-1 bg-slate-950 text-xs"
         />
 
-        <button
+        <Button
           type="submit"
           disabled={!nuevoMensaje.trim() || enviando}
-          className="btn btn-sm bg-[#008069] hover:bg-[#006654] text-white border-none font-bold px-5 flex items-center gap-1.5 shadow-sm"
+          size="sm"
+          className="gap-1.5 font-bold"
         >
           <Send className="w-3.5 h-3.5" />
           <span>Enviar</span>
-        </button>
+        </Button>
       </form>
     </div>
   );
 };
+
+export default ChatWindow;

@@ -85,8 +85,12 @@ function mergeConversations(conversations: ConversacionMock[], cached: Conversac
   const unique = new Map<string, ConversacionMock>();
   [...conversations, ...cached].forEach((conversation) => {
     const previous = unique.get(conversation.id);
-    if (!previous || conversation.ultimoMensajeTimestamp >= previous.ultimoMensajeTimestamp) {
+    if (!previous) {
       unique.set(conversation.id, conversation);
+    } else {
+      const latest = conversation.ultimoMensajeTimestamp >= previous.ultimoMensajeTimestamp ? conversation : previous;
+      const favorito = conversation.favorito !== undefined ? conversation.favorito : previous.favorito;
+      unique.set(conversation.id, { ...latest, favorito });
     }
   });
   return [...unique.values()].sort((a, b) => b.ultimoMensajeTimestamp.localeCompare(a.ultimoMensajeTimestamp));
@@ -226,6 +230,17 @@ export const inboxApi = {
     agente?: { id: string; nombre: string } | null
   ): Promise<ConversacionMock> {
     return mockApi.actualizarEstadoConversacion(empresaId, conversacionId, estado, agente);
+  },
+
+  async toggleFavorito(
+    empresaId: string,
+    conversacionId: string
+  ): Promise<ConversacionMock> {
+    const updated = await mockApi.toggleFavorito(empresaId, conversacionId);
+    const cache = readCache(empresaId, updated.numeroId);
+    const newConvs = cache.conversations.map((c) => (c.id === conversacionId ? updated : c));
+    writeCache(empresaId, updated.numeroId, { conversations: newConvs, messages: cache.messages });
+    return updated;
   },
 
   async getContactos(empresaId: string): Promise<ContactoMock[]> {

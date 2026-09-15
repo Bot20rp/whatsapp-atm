@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Phone, Mail, Building, Tag, FileText, X } from 'lucide-react';
 import { ContactoMock } from '../types/inbox.types';
+import { Button } from '../../../shared/components/ui/button';
+import { Badge } from '../../../shared/components/ui/badge';
+import { Avatar } from '../../../shared/components/ui/avatar';
 
 interface ContactSidebarProps {
   contacto: ContactoMock | null;
@@ -19,94 +22,98 @@ export const ContactSidebar: React.FC<ContactSidebarProps> = ({ contacto, onClos
   };
 
   return (
-    <div className="w-80 bg-white border-l border-slate-200 flex flex-col shrink-0 h-full overflow-y-auto shadow-sm">
+    <div className="w-80 bg-slate-900 border-l border-slate-800 flex flex-col shrink-0 h-full overflow-y-auto shadow-2xl">
       {/* Header */}
-      <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
-        <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
+      <div className="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/60">
+        <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
           Detalles del Contacto
         </span>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onClose}
-          className="p-1 text-slate-400 hover:text-slate-700 rounded hover:bg-slate-200"
+          className="h-7 w-7 text-slate-400 hover:text-white"
         >
           <X className="w-4 h-4" />
-        </button>
+        </Button>
       </div>
 
       <div className="p-4 space-y-5">
         {/* Profile Card */}
-        <div className="flex flex-col items-center text-center pb-4 border-b border-slate-100">
-          <div className="w-14 h-14 rounded-full bg-[#008069] text-white flex items-center justify-center font-black text-lg mb-2 shadow-sm">
-            {contacto.nombre.substring(0, 2).toUpperCase()}
-          </div>
-          <h4 className="text-sm font-bold text-slate-900">{contacto.nombre}</h4>
-          <span className="text-xs text-slate-600 font-medium">{contacto.organizacion}</span>
-          <span className="mt-2 inline-block text-[10px] bg-slate-100 text-slate-800 border border-slate-300 px-2 py-0.5 rounded font-mono font-bold">
-            ORIGEN: {contacto.origen.toUpperCase()}
-          </span>
+        <div className="flex flex-col items-center text-center pb-4 border-b border-slate-800">
+          <Avatar
+            fallback={contacto.nombre.substring(0, 2).toUpperCase()}
+            size="lg"
+            className="w-16 h-16 bg-emerald-600/30 text-emerald-400 border-emerald-500/40 text-xl font-bold mb-3 shadow-lg"
+          />
+          <h4 className="text-sm font-bold text-white">{contacto.nombre}</h4>
+          <span className="text-xs text-slate-400 font-medium">{contacto.organizacion}</span>
+          <Badge variant="outline" className="mt-2 text-[10px] uppercase font-mono">
+            ORIGEN: {contacto.origen}
+          </Badge>
         </div>
 
         {/* Contact Info Items */}
         <div className="space-y-3 text-xs">
-          <div className="flex items-center gap-2.5 text-slate-800">
-            <Phone className="w-4 h-4 text-[#008069] shrink-0" />
+          <div className="flex items-center gap-2.5 text-slate-300">
+            <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="font-mono font-bold">{contacto.telefono}</span>
           </div>
 
-          <div className="flex items-center gap-2.5 text-slate-800">
-            <Mail className="w-4 h-4 text-[#008069] shrink-0" />
+          <div className="flex items-center gap-2.5 text-slate-300">
+            <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="truncate font-medium">{contacto.email}</span>
           </div>
 
-          <div className="flex items-center gap-2.5 text-slate-800">
-            <Building className="w-4 h-4 text-[#008069] shrink-0" />
+          <div className="flex items-center gap-2.5 text-slate-300">
+            <Building className="w-4 h-4 text-emerald-400 shrink-0" />
             <span className="font-medium">{contacto.organizacion}</span>
           </div>
         </div>
 
         {/* Tags */}
-        <div className="space-y-2 pt-2 border-t border-slate-100">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800">
-            <Tag className="w-3.5 h-3.5 text-[#008069]" />
+        <div className="space-y-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-300">
+            <Tag className="w-3.5 h-3.5 text-emerald-400" />
             <span>Etiquetas</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {contacto.tags.map((t, idx) => (
-              <span
-                key={idx}
-                className="text-[10px] bg-emerald-100 text-emerald-900 border border-emerald-300 px-2 py-0.5 rounded font-bold"
-              >
+              <Badge key={idx} variant="success" className="text-[10px]">
                 {t}
-              </span>
+              </Badge>
             ))}
           </div>
         </div>
 
         {/* Internal Notes */}
-        <div className="space-y-2 pt-2 border-t border-slate-100">
-          <div className="flex items-center justify-between text-xs font-bold text-slate-800">
+        <div className="space-y-2 pt-3 border-t border-slate-800">
+          <div className="flex items-center justify-between text-xs font-bold text-slate-300">
             <div className="flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-[#008069]" />
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
               <span>Notas Internas</span>
             </div>
-            {guardado && <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">¡Guardado!</span>}
+            {guardado && <Badge variant="success" className="text-[10px]">¡Guardado!</Badge>}
           </div>
           <textarea
             rows={4}
             value={nota}
             onChange={(e) => setNota(e.target.value)}
-            className="w-full text-xs p-2.5 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:border-[#008069] text-slate-900 font-medium"
+            className="w-full text-xs p-3 border border-slate-800 rounded-xl bg-slate-950 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500"
             placeholder="Escriba notas sobre este cliente..."
           />
-          <button
+          <Button
             type="button"
+            size="sm"
             onClick={handleSaveNota}
-            className="btn btn-xs bg-[#008069] hover:bg-[#006654] text-white border-none font-bold px-3.5 shadow-xs"
+            className="w-full font-bold text-xs"
           >
             Guardar Nota
-          </button>
+          </Button>
         </div>
       </div>
     </div>
   );
 };
+
+export default ContactSidebar;

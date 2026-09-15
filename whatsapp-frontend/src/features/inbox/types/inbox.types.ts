@@ -4,5 +4,5 @@ import { ContactoMock } from '../../../mocks/data/contactos.mock';
 
 export type { ConversacionMock, MensajeMock, ContactoMock };
 
-export type ConversationFilter = 'all' | 'bot' | 'human' | 'closed';
+export type ConversationFilter = 'all' | 'favorites' | 'bot' | 'human' | 'closed';
 

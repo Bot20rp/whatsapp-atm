@@ -190,6 +190,15 @@ export const InboxPage: React.FC = () => {
     setConversaciones((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
   };
 
+  const handleToggleFavorito = async (conversacionId: string) => {
+    if (!empresaActual) return;
+    const updated = await inboxApi.toggleFavorito(empresaActual.id, conversacionId);
+    setConversaciones((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
+    if (selectedConv?.id === updated.id) {
+      setSelectedConv(updated);
+    }
+  };
+
   if (loadingConv) {
     return <Spinner text="Cargando conversaciones de la línea..." size="lg" />;
   }
@@ -205,6 +214,7 @@ export const InboxPage: React.FC = () => {
         setFiltro={setFiltro}
         busqueda={busqueda}
         setBusqueda={setBusqueda}
+        onToggleFavorito={handleToggleFavorito}
       />
 
       {/* 2. Panel Central de Mensajes */}
@@ -222,6 +232,7 @@ export const InboxPage: React.FC = () => {
               onCambiarEstado={handleCambiarEstado}
               onToggleSidebar={() => setSidebarAbierto(!sidebarAbierto)}
               sidebarAbierto={sidebarAbierto}
+              onToggleFavorito={() => handleToggleFavorito(selectedConv.id)}
             />
           )}
 

@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Bot, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Bot, ArrowRight } from 'lucide-react';
 import { useTenant } from '../../../shared/hooks/useTenant';
 import { automationsApi } from '../api/automations.api';
 import { AutomatizacionMock } from '../types/automations.types';
 import { Spinner } from '../../../shared/components/feedback/Spinner';
 import { EmptyState } from '../../../shared/components/feedback/EmptyState';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../../shared/components/ui/card';
+import { Badge } from '../../../shared/components/ui/badge';
+import { Switch } from '../../../shared/components/ui/switch';
 
 export const AutomationsPage: React.FC = () => {
   const { empresaActual, numeroActual } = useTenant();
@@ -36,21 +39,23 @@ export const AutomationsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-        <div>
-          <h2 className="text-xl font-black text-slate-900">Flujos y Automatizaciones del Bot</h2>
-          <p className="text-xs text-slate-600 mt-0.5">
-            Reglas de respuesta activa para la línea <strong className="text-[#008069]">{numeroActual?.alias}</strong> ({empresaActual?.nombre})
-          </p>
-        </div>
+      <Card>
+        <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-xl font-bold text-white">Flujos y Automatizaciones del Bot</CardTitle>
+            <CardDescription className="text-xs">
+              Reglas de respuesta activa para la línea <strong className="text-emerald-400">{numeroActual?.alias}</strong> ({empresaActual?.nombre})
+            </CardDescription>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-slate-600 font-semibold">Motor de IA / Reglas:</span>
-          <span className="text-xs font-black text-white bg-emerald-600 px-3 py-1 rounded-md shadow-xs">
-            OPERATIVO
-          </span>
-        </div>
-      </div>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-slate-400 font-semibold">Motor de IA / Reglas:</span>
+            <Badge variant="success" className="font-bold">
+              OPERATIVO
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Rules List */}
       {loading ? (
@@ -64,82 +69,77 @@ export const AutomationsPage: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 gap-4">
           {reglas.map((regla) => (
-            <div
+            <Card
               key={regla.id}
-              className={`bg-white border rounded-xl p-5 transition-all shadow-xs ${
-                regla.activo ? 'border-slate-200 hover:border-slate-300' : 'border-slate-200 opacity-60 bg-slate-50'
-              }`}
+              className={regla.activo ? 'border-slate-800' : 'border-slate-800/50 opacity-60 bg-slate-900/40'}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-xs ${
-                      regla.activo
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-200 text-slate-500'
-                    }`}
-                  >
-                    <Bot className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-black text-slate-900">{regla.nombre}</h3>
-                    <p className="text-xs text-slate-600 mt-0.5 font-medium">{regla.descripcion}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="text-right text-[11px]">
-                    <div className="text-slate-500 font-medium">Ejecuciones hoy:</div>
-                    <div className="font-extrabold text-slate-900">{regla.ejecucionesHoy} disparos</div>
+              <CardContent className="p-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                  <div className="flex items-center gap-3.5">
+                    <div
+                      className={`w-11 h-11 rounded-xl flex items-center justify-center shadow-lg ${
+                        regla.activo
+                          ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30'
+                          : 'bg-slate-800 text-slate-500'
+                      }`}
+                    >
+                      <Bot className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-white">{regla.nombre}</h3>
+                      <p className="text-xs text-slate-400 mt-0.5">{regla.descripcion}</p>
+                    </div>
                   </div>
 
-                  <button
-                    onClick={() => handleToggle(regla)}
-                    className="flex items-center gap-1.5 text-xs font-bold cursor-pointer"
-                  >
-                    {regla.activo ? (
-                      <span className="text-emerald-700 flex items-center gap-1">
-                        <ToggleRight className="w-8 h-8 text-emerald-600" /> ACTIVA
+                  <div className="flex items-center gap-6">
+                    <div className="text-right text-xs">
+                      <div className="text-slate-400 font-medium">Disparos hoy:</div>
+                      <div className="font-bold text-white">{regla.ejecucionesHoy} ejecuciones</div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={regla.activo}
+                        onCheckedChange={() => handleToggle(regla)}
+                      />
+                      <span className="text-xs font-bold text-slate-300">
+                        {regla.activo ? 'ACTIVA' : 'INACTIVA'}
                       </span>
-                    ) : (
-                      <span className="text-slate-500 flex items-center gap-1">
-                        <ToggleLeft className="w-8 h-8 text-slate-400" /> INACTIVA
-                      </span>
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              {/* Visual Flow Representation */}
-              <div className="mt-4 flex flex-col md:flex-row items-center gap-3 text-xs bg-slate-50 p-3.5 rounded-lg border border-slate-200">
-                <div className="flex-1 bg-white p-3 rounded-md border border-slate-200 w-full shadow-xs">
-                  <span className="text-[10px] font-black text-slate-500 uppercase block mb-0.5">
-                    Disparador (Trigger)
-                  </span>
-                  <span className="text-slate-900 font-bold">{regla.disparador}</span>
+                    </div>
+                  </div>
                 </div>
 
-                <ArrowRight className="w-5 h-5 text-indigo-500 shrink-0 hidden md:block" />
+                {/* Visual Flow Representation */}
+                <div className="mt-4 flex flex-col md:flex-row items-center gap-3 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+                  <div className="flex-1 bg-slate-900 p-3 rounded-lg border border-slate-800 w-full">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+                      Disparador (Trigger)
+                    </span>
+                    <span className="text-white font-semibold">{regla.disparador}</span>
+                  </div>
 
-                <div className="flex-1 bg-white p-3 rounded-md border border-slate-200 w-full shadow-xs">
-                  <span className="text-[10px] font-black text-slate-500 uppercase block mb-0.5">
-                    Acción Ejecutada
-                  </span>
-                  <span className="text-indigo-800 font-black uppercase font-mono text-[11px] bg-indigo-50 px-2 py-0.5 rounded">
-                    {regla.tipoAccion.replace('_', ' ')}
-                  </span>
+                  <ArrowRight className="w-5 h-5 text-purple-400 shrink-0 hidden md:block" />
+
+                  <div className="flex-1 bg-slate-900 p-3 rounded-lg border border-slate-800 w-full">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+                      Acción Ejecutada
+                    </span>
+                    <Badge variant="outline" className="border-purple-500/30 text-purple-300 bg-purple-500/10">
+                      {regla.tipoAccion.replace('_', ' ')}
+                    </Badge>
+                  </div>
+
+                  <ArrowRight className="w-5 h-5 text-emerald-400 shrink-0 hidden md:block" />
+
+                  <div className="flex-1 bg-slate-900 p-3 rounded-lg border border-slate-800 w-full">
+                    <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">
+                      Tasa de Éxito SLA
+                    </span>
+                    <span className="text-emerald-400 font-extrabold text-sm">{regla.tasaExito}</span>
+                  </div>
                 </div>
-
-                <ArrowRight className="w-5 h-5 text-emerald-500 shrink-0 hidden md:block" />
-
-                <div className="flex-1 bg-white p-3 rounded-md border border-slate-200 w-full shadow-xs">
-                  <span className="text-[10px] font-black text-slate-500 uppercase block mb-0.5">
-                    Tasa de Éxito SLA
-                  </span>
-                  <span className="text-emerald-700 font-black text-sm">{regla.tasaExito}</span>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
